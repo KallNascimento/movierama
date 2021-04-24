@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:movies/components/centered_message.dart';
 import 'package:movies/components/centered_progress.dart';
 import 'package:movies/components/chip_date.dart';
@@ -82,24 +84,45 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   _buildDetails() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Text(
-        'Imdb Code: ' + _controller.movieDetail.imdbId,
-        textAlign: TextAlign.justify,
-        style: Theme.of(context).textTheme.bodyText2,
-      ),
-    );
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+        child: RichText(
+          text: TextSpan(
+              text: 'See on IMDB',
+              style: TextStyle(color: Colors.red),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  var url = 'https://www.imdb.com/title/' +
+                      _controller.movieDetail.imdbId;
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Não existe esse site: ' +
+                        _controller.movieDetail.homepage +
+                        '!';
+                  }
+                }),
+        ));
   }
 
   _buildOficialPage() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Text(
-        'Oficial Page: ' + _controller.movieDetail.homepage,
-        textAlign: TextAlign.justify,
-        style: Theme.of(context).textTheme.bodyText2,
-      ),
-    );
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+        child: RichText(
+          text: TextSpan(
+              text: 'Oficial Page',
+              style: TextStyle(color: Colors.red),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  var url = _controller.movieDetail.homepage;
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Não existe esse site: ' +
+                        _controller.movieDetail.homepage +
+                        '!';
+                  }
+                }),
+        ));
   }
 
   _buildStatus() {
